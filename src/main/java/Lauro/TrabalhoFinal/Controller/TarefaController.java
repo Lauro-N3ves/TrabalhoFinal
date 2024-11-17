@@ -26,9 +26,15 @@ public class TarefaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Tarefa> atualizarTarefa(@PathVariable Long id, @RequestBody Tarefa detalhesTarefa) {
-        return ResponseEntity.ok(tarefaService.atualizarTarefa(id, detalhesTarefa));
+    public ResponseEntity<Tarefa> atualizarTarefa(@PathVariable Long id, @RequestBody Tarefa tarefaAtualizada) {
+        Tarefa tarefa = tarefaService.atualizarTarefa(id, tarefaAtualizada);
+        if (tarefa != null) {
+            return ResponseEntity.ok(tarefa);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluirTarefa(@PathVariable Long id) {
@@ -36,3 +42,4 @@ public class TarefaController {
         return ResponseEntity.noContent().build();
     }
 }
+//a

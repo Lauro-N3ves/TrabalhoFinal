@@ -26,17 +26,21 @@ public class TarefaService {
     }
 
     public Tarefa atualizarTarefa(Long id, Tarefa detalhesTarefa) {
-        Tarefa tarefa = tarefaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Tarefa não encontrada"));
-        tarefa.setTitulo(detalhesTarefa.getTitulo());
-        tarefa.setDescricao(detalhesTarefa.getDescricao());
-        tarefa.setPrioridade(detalhesTarefa.getPrioridade());
-        return tarefaRepository.save(tarefa);
+        return tarefaRepository.findById(id).map(tarefa -> {
+            tarefa.setTitulo(detalhesTarefa.getTitulo());
+            tarefa.setDescricao(detalhesTarefa.getDescricao());
+            tarefa.setStatus(detalhesTarefa.getStatus());
+            tarefa.setPrioridade(detalhesTarefa.getPrioridade());
+            tarefa.setDataLimite(detalhesTarefa.getDataLimite());
+            return tarefaRepository.save(tarefa);
+        }).orElseThrow(() -> new ResourceNotFoundException("Tarefa não encontrada com id: " + id));
     }
+
 
     public void excluirTarefa(Long id) {
         Tarefa tarefa = tarefaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Tarefa não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Tarefa não encontrada com id: " + id));
         tarefaRepository.delete(tarefa);
     }
 }
+//a

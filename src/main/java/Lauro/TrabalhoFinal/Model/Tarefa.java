@@ -2,6 +2,7 @@ package Lauro.TrabalhoFinal.Model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 public class Tarefa {
@@ -15,14 +16,16 @@ public class Tarefa {
 
     private String descricao;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime dataCriacao;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private Status status = Status.A_FAZER;
 
     @Enumerated(EnumType.STRING)
     private Prioridade prioridade;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime dataLimite;
 
     // Getters e Setters
