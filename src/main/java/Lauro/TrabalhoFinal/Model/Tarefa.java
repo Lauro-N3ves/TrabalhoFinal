@@ -67,7 +67,9 @@ public class Tarefa {
     }
 
     public void setStatus(Status status) {
-        this.status = status;
+        if (this.status != Status.CONCLUIDO) { // Verifica se a tarefa já está concluída antes de permitir a mudança de status
+            this.status = status;
+        }
     }
 
     public Prioridade getPrioridade() {
