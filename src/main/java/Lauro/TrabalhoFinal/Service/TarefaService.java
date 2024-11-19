@@ -1,5 +1,6 @@
 package Lauro.TrabalhoFinal.Service;
 
+import Lauro.TrabalhoFinal.Model.Prioridade;
 import Lauro.TrabalhoFinal.Model.Status;
 import Lauro.TrabalhoFinal.Model.Tarefa;
 import Lauro.TrabalhoFinal.Repository.TarefaRepository;
@@ -90,6 +91,47 @@ public class TarefaService {
 
     public List<Tarefa> listarTarefasPorStatusOrdenado(Status status) {
         return tarefaRepository.findByStatusOrderByPrioridadeDesc(status);
+    }
+
+    // Listar tarefas por prioridade
+    public List<Tarefa> listarTarefasPorPrioridade(Prioridade prioridade) {
+        return tarefaRepository.findByPrioridade(prioridade);
+    }
+
+    // Listar tarefas atrasadas
+    public List<Tarefa> listarTarefasAtrasadas() {
+        return tarefaRepository.findAtrasadas(LocalDateTime.now());
+    }
+
+    // Listar tarefas por data limite
+    public List<Tarefa> listarTarefasPorDataLimite(LocalDateTime dataLimite) {
+        return tarefaRepository.findByDataLimite(dataLimite);
+    }
+
+    public Map<String, List<Tarefa>> gerarRelatorioTarefas() {
+        List<Tarefa> todasTarefas = tarefaRepository.findAll();
+        LocalDateTime dataAtual = LocalDateTime.now();
+
+        Map<String, List<Tarefa>> relatorioTarefas = new HashMap<>();
+
+        // Agrupar as tarefas por status
+        relatorioTarefas.put("A_FAZER", todasTarefas.stream()
+                .filter(tarefa -> tarefa.getStatus() == Status.A_FAZER)
+                .collect(Collectors.toList()));
+        relatorioTarefas.put("EM_PROGRESSO", todasTarefas.stream()
+                .filter(tarefa -> tarefa.getStatus() == Status.EM_PROGRESSO)
+                .collect(Collectors.toList()));
+        relatorioTarefas.put("CONCLUIDO", todasTarefas.stream()
+                .filter(tarefa -> tarefa.getStatus() == Status.CONCLUIDO)
+                .collect(Collectors.toList()));
+
+        // Destacar as tarefas atrasadas (data limite no passado e não concluídas)
+        List<Tarefa> tarefasAtrasadas = todasTarefas.stream()
+                .filter(tarefa -> tarefa.getDataLimite() != null && tarefa.getDataLimite().isBefore(dataAtual) && tarefa.getStatus() != Status.CONCLUIDO)
+                .collect(Collectors.toList());
+        relatorioTarefas.put("ATRASADAS", tarefasAtrasadas);
+
+        return relatorioTarefas;
     }
 
 }

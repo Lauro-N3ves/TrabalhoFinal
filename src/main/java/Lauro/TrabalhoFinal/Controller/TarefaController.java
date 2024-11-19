@@ -1,5 +1,6 @@
 package Lauro.TrabalhoFinal.Controller;
 
+import Lauro.TrabalhoFinal.Model.Prioridade;
 import Lauro.TrabalhoFinal.Model.Tarefa;
 import Lauro.TrabalhoFinal.Model.Status;
 import Lauro.TrabalhoFinal.Service.ResourceNotFoundException;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.List;
 
@@ -75,5 +78,34 @@ public class TarefaController {
         return ResponseEntity.ok(tarefas);
     }
 
+    // Endpoint para listar todas as tarefas por prioridade
+    @GetMapping("/prioridade/{prioridade}")
+    public ResponseEntity<List<Tarefa>> listarTarefasPorPrioridade(@PathVariable String prioridade) {
+        try {
+            List<Tarefa> tarefas = tarefaService.listarTarefasPorPrioridade(Prioridade.valueOf(prioridade.toUpperCase()));
+            return ResponseEntity.ok(tarefas);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    // Endpoint para listar todas as tarefas atrasadas
+    @GetMapping("/atrasadas")
+    public ResponseEntity<List<Tarefa>> listarTarefasAtrasadas() {
+        List<Tarefa> tarefasAtrasadas = tarefaService.listarTarefasAtrasadas();
+        return ResponseEntity.ok(tarefasAtrasadas);
+    }
+
+    // Endpoint para listar tarefas por data limite
+    @GetMapping("/data-limite/{data}")
+    public ResponseEntity<List<Tarefa>> listarTarefasPorDataLimite(@PathVariable String data) {
+        try {
+            LocalDateTime dataLimite = LocalDateTime.parse(data);
+            List<Tarefa> tarefas = tarefaService.listarTarefasPorDataLimite(dataLimite);
+            return ResponseEntity.ok(tarefas);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
 }
 //a
